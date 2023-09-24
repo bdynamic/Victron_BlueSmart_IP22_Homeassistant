@@ -3,6 +3,7 @@
 ## (c) by [<img src="https://www.pvtex.de/user/themes/darkquark/images/logo/logo_trans.png" width=70>](https://www.wasn.eu)
 
 - [Connecting to venus](#connecting-to-venus)   
+  - [How to open the Charger](#how-to-open-the-charger)
   - [Connect USB to TTL Converter](#connect-usb-to-ttl-converter)    
   - [Connected to venus](#connected-to-venus) 
 - [Service Change Charge Current](#service-change-charge-current)
@@ -17,6 +18,17 @@
       
      
 ## Connecting to venus
+### How to open the Charger
+    
+First remove the 4 marked screws on the bottom side of the charger.    
+[Bottom](/Images/charger_bottom.png)   
+   
+Now you can slide the top cover 1 centimeter down and remove it.    
+[Top](/Images/charger_top.png)   
+   
+You can see on the bottom right side the 6pin connector we need to connect.   
+     
+    
 ### Connect USB to TTL Converter
      
 ![Victron FTDI Schematic](/Images/Victron_BlueSmart_ftdi.jpg)
