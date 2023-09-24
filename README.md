@@ -29,7 +29,8 @@ Now you can slide the top cover 1 centimeter down and remove it.
 You can see on the bottom right side the 6pin connector we need to connect.   
      
 You can use a short (about 10cm) 6pin to 6pin flat ribbon cable with the 6pin sockets to connect the charger to the adapter.   
-The cable can be routed outside at the right side of the battery terminals.    
+The cable can be routed outside at the right side of the battery terminals (marked with red line).   
+![Cable](/Images/charger_bttom_cable.png)    
     
     
 ### Connect USB to TTL Converter
