@@ -24,7 +24,7 @@ First remove the 4 marked screws on the bottom side of the charger.
 ![Bottom](/Images/charger_bottom.png)   
    
 Now you can slide the top cover 1 centimeter down and remove it.    
-![Top](/Images/charger_top.png)   
+![Front](/Images/charger_front.png)   
    
 You can see on the bottom right side the 6pin connector we need to connect.   
      
