@@ -99,7 +99,7 @@ If the seconds are under 5 then the service crashes and gets restarted all the t
 ## Adapter
 ### Adapter PCB
 
-I have just created a little adapter pcb with a level shifter and isolation for RX and TX.   
+I have just created a little adapter pcb.       
 With this you can use a standard ve.direct cable:      
 ![Adapter Schematic](/Images/pcb_schematic.jpg)
      
