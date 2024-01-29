@@ -134,10 +134,8 @@ def main():
   
         numP1 = (int)(current * 10)
         numP2 = (0x70 - numP1) & 0xFF
-        hexP1 = "%X" % (numP1)
-        hexP2 = "%X" % (numP2)
-        if len(hexP1) < 2:
-          hexP1 += "0"
+        hexP1 = "%02X" % (numP1)
+        hexP2 = "%02X" % (numP2)
         msg =  ':8F0ED00' + hexP1[0] + hexP1[1] + '00' + hexP2[0] + hexP2[1] + '\n'
         logging.debug("VE.direct out: " + msg)
         ser.write(msg.encode())
