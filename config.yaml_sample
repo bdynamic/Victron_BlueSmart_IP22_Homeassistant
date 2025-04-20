@@ -1,0 +1,21 @@
+serial:
+  port: /dev/ttyUSB0
+  baudrate: 19200
+
+
+# MQTT connection settings
+mqtt:
+  host: <IP MQTT BROKER>
+  port: 1883
+  username: "username"
+  password: "password"
+  base_topic: "bat_charger"
+  current_limit_topic: bat_charger/itbatchrg/curlimit
+
+device:
+  name: itbatchrg
+  vendor: victron
+  initial_current_limit: 10.0
+
+# Logging level: DEBUG, INFO, WARNING, ERROR
+log_level: "INFO"

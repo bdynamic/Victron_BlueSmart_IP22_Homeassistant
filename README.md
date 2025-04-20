@@ -1,23 +1,107 @@
-# Victron_BlueSmart_IP22
-## Using the BlueSmart IP22 Charger without Bluetooth.
-## (c) by [<img src="https://www.pvtex.de/user/themes/darkquark/images/logo/logo_trans.png" width=70>](https://www.wasn.eu)
+# Victron VE.Direct MQTT Charger Controller
 
-- [Connecting to venus](#connecting-to-venus)   
-  - [How to open the Charger](#how-to-open-the-charger)
-  - [Connect USB to TTL Converter](#connect-usb-to-ttl-converter)    
-  - [Connected to venus](#connected-to-venus) 
-- [Service Change Charge Current](#service-change-charge-current)
-  - [Install](#install)
-  - [Config](#config)
-  - [Uninstall](#uninstall)
-  - [Restart](#restart)
-  - [Debugging](#debugging)  
-- [Adapter](#adapter)   
-  - [Adapter PCB](#adapter-pcb)     
-     
-      
-     
-## Connecting to venus
+A Python program to read voltage/current from a Victron Blue Smart charger via VE.Direct, publish to Home Assistant via MQTT (with discovery & availability), and accept charge-current limit updates via MQTT to send back to the charger.
+
+## Installation Software
+
+```bash
+sudo apt update
+sudo apt install -y python3 python3-venv python3-pip git
+cd /opt
+sudo git clone https://github.com/bdynamic/Victron_BlueSmart_IP22_Homeassistant.git
+cd Victron_BlueSmart_IP22_Homeassistant
+
+pip install -r requirements.txt
+```
+
+### Config & running as a Service
+#### Create the config file
+Create the config file e.g. in /etc/itbat-charger.yaml
+Adjust:
+  - Serial port
+  - MQTT Username
+  - MQTT Password 
+  - MQTT Topic if applicable
+
+```yaml
+serial:
+  port: /dev/ttyUSB0
+  baudrate: 19200
+
+
+# MQTT connection settings
+mqtt:
+  host: <IP MQTT BROKER>
+  port: 1883
+  username: "username"
+  password: "password"
+  base_topic: "bat_charger"
+  current_limit_topic: bat_charger/itbatchrg/curlimit
+
+device:
+  name: itbatchrg
+  vendor: victron
+  initial_current_limit: 10.0
+
+# Logging level: DEBUG, INFO, WARNING, ERROR
+log_level: "INFO"
+```
+
+#### Systemd Service
+Create /etc/systemd/system/itbat-charger.service:
+```ini
+[Unit]
+Description=Victron VE.Direct → MQTT Charger Controller
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/victron-mqtt-charger
+ExecStart=/opt/victron-mqtt-charger/venv/bin/python charger_controller.py --config /etc/itbat-charger.yaml
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Configuration of Homeassistant
+
+#### Creating the Current slider
+Create a slider for setting the Current by adding this to configuration.yaml:
+```yaml
+input_number:
+  itbat_charge_current:
+    name: Charge Current Limit
+    min: 7.5
+    max: 25.0
+    step: 0.1
+    unit_of_measurement: "A"
+    mode: slider
+```
+
+#### MQTT Publish Automation
+Add to your automations.yaml:
+```yaml
+- alias: itbat_publish_mqtt_charge_current
+  description: "Publishes the charge current limit to MQTT on change"
+  mode: single
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_number.itbat_charge_current
+  action:
+    - service: mqtt.publish
+      data:
+        topic: "bat_charger/itbatchrg/curlimit"
+        payload: "{{ states('input_number.itbat_charge_current') }}"
+        qos: 0
+        retain: true
+```
+
+
+## Interfacing the Charger
 ### How to open the Charger
     
 First remove the 4 marked screws on the bottom side of the charger.    
@@ -41,76 +125,9 @@ On the picture the jumper for the TTL level is wrong.
 IMPORTANT: change the jumper to 3.3V    
 
 You have to use TTL to USB adapter for 3.3V TTL level.   
-If you use an isolated adapter you have to connect the 3.3V pin to the adapter, if not dont connect it.   
-     
-     
-### Connected to venus
+If you use an isolated adapter you have to connect the 3.3V pin to the adapter.
+If you do not have an isolated Adapter DONT CONNECT to the 3.3V Pin! 
 
-if you connect the ttl to usb cable direct to a venus os device (i have on here running on a raspberry pi 4) 
-the charger will show and you can see all information about it:
-  
-![Screenshot01](../../raw/master/Images/ScreenShot_01.jpg)      
-![Screenshot02](../../raw/master/Images/Screenshot_02.jpg)       
-![Screenshot03](../../raw/master/Images/Screenshot_03.jpg) 
-     
-     
-## Service Change Charge Current
 
-In the directory ```bluesmart-charger``` are all files to install this automatic script as a service on venus os.    
-First off, a big thanks to [mr-manuel](https://github.com/mr-manuel) that created a bunch of templates that made this possible.   
-     
-#### Install
-Copy the ```bluesmart-charger``` folder to ```/data/etc``` on your Venus OS device
-    
-Run bash ```/data/etc/bluesmart-charger/install.sh``` as root
 
-The daemon-tools should start this service automatically within seconds.
-      
-#### Config
-Copy or rename the ```config.sample.ini``` to ```config.ini``` in the ```bluesmart-charger``` folder and change it as you need it.    
-These values can  be changed in the config file:     
 
-| **KEY** | **DESCRIPTION** | **DEFAULT** |
-| :---: | :--- | :---: |
-|  **ip** | IP of your venus device | 127.0.0.1 | 
-|**phase**| modbus service id for the phase your system is connected to | 820 |
-|**interface** | the USB interface of the charger | /dev/ttyUSB1 |
-|**intervall** | how often the charging current should be calculated and send to the charger |30 seconds |
-|**maxcurrent** | max charging current to limit this value | 12 A |
-
-After changing the config file run the ```restart.sh``` script to activate the new config.     
-     
-#### Uninstall
-Run ```/data/etc/bluesmart-charger/uninstall.sh```
-     
-#### Restart
-Run ```/data/etc/bluesmart-charger/restart.sh```
-     
-#### Debugging
-The logs can be checked with ```tail -n 100 -F /data/log/bluesmart-charger/current | tai64nlocal```
-
-The service status can be checked with svstat: ```svstat /service/bluesmart-charger```
-
-This will output somethink like ```/service/bluesmart-charger: up (pid 5845) 185 seconds```
-
-If the seconds are under 5 then the service crashes and gets restarted all the time. If you do not see anything in the logs you can increase the log level in ```/data/etc/bluesmart-charger/config.ini``` by changing ```logging = WARNING``` to ```logging = INFO``` or ```logging = DEBUG```
-     
-     
-## Adapter
-### Adapter PCB
-
-I have just created a little adapter pcb.       
-With this you can use a standard ve.direct cable:      
-![Adapter Schematic](/Images/pcb_schematic.jpg)
-     
-Here is how it looks like:       
-![PCB](/Images/adapter_pcb.jpg)
-![Adapter 3D](/Images/adapter_3d.jpg)
-      
-And there is a little case for it.      
-![Adapter Case](/Images/adapter_case.jpg)
-     
-
-All files needed are in the pcb folder.    
-    
-If you need a ready made one just drop me an email.
