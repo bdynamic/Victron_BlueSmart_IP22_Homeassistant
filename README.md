@@ -107,14 +107,15 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/opt/victron-mqtt-charger
-ExecStart=/opt/victron-mqtt-charger/venv/bin/python charger_controller.py --config /etc/itbat-charger.yaml
+WorkingDirectory=/opt/Victron_BlueSmart_IP22_Homeassistant
+ExecStart=/usr/bin/python3 /opt/Victron_BlueSmart_IP22_Homeassistant/victron_bluesmart_controller.py --config /etc/bluesmart_interface_config.yaml
 Restart=on-failure
 RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
 ```
+Adapt to your own setup!
 
 #### Enable + start the service
 
