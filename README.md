@@ -1,33 +1,52 @@
 # Victron VE.Direct MQTT Charger Controller
 
-A Python program to read voltage/current from a Victron Blue Smart charger via VE.Direct, publish to Home Assistant via MQTT (with discovery & availability), and accept charge-current limit updates via MQTT to send back to the charger.
+A Python program to read voltage and current from a Victron Blue Smart Charger via VE.Direct, publish to Home Assistant via MQTT (with discovery & availability), and accept charge current limit updates via MQTT to send back to the charger.
+
+---
+
+## Table of Contents
+
+- [Installation Software](#installation-software)
+- [Config & Running as a Service](#config--running-as-a-service)
+  - [Create the Config File](#create-the-config-file)
+  - [Systemd Service](#systemd-service)
+- [Configuration of Home Assistant](#configuration-of-home-assistant)
+  - [Creating the Current Slider](#creating-the-current-slider)
+  - [MQTT Publish Automation](#mqtt-publish-automation)
+- [Interfacing the Charger](#interfacing-the-charger)
+  - [How to Open the Charger](#how-to-open-the-charger)
+  - [Connect USB to TTL Converter](#connect-usb-to-ttl-converter)
+
+---
 
 ## Installation Software
 
 ```bash
 sudo apt update
-sudo apt install -y python3 python3-venv python3-pip git
+sudo apt install -y python3 python3-pip git
 cd /opt
 sudo git clone https://github.com/bdynamic/Victron_BlueSmart_IP22_Homeassistant.git
 cd Victron_BlueSmart_IP22_Homeassistant
-
 pip install -r requirements.txt
 ```
 
-### Config & running as a Service
-#### Create the config file
-Create the config file e.g. in /etc/itbat-charger.yaml
-Adjust:
-  - Serial port
-  - MQTT Username
-  - MQTT Password 
-  - MQTT Topic if applicable
+---
+
+## Config & Running as a Service
+
+### Create the Config File
+
+Create the config file, e.g. at `/etc/itbat-charger.yaml`. Adjust the following:
+
+- Serial port
+- MQTT username
+- MQTT password
+- MQTT topic (if applicable)
 
 ```yaml
 serial:
   port: /dev/ttyUSB0
   baudrate: 19200
-
 
 # MQTT connection settings
 mqtt:
@@ -47,8 +66,10 @@ device:
 log_level: "INFO"
 ```
 
-#### Systemd Service
-Create /etc/systemd/system/itbat-charger.service:
+### Systemd Service
+
+Create the systemd service file at `/etc/systemd/system/itbat-charger.service`:
+
 ```ini
 [Unit]
 Description=Victron VE.Direct → MQTT Charger Controller
@@ -66,10 +87,14 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-### Configuration of Homeassistant
+---
 
-#### Creating the Current slider
-Create a slider for setting the Current by adding this to configuration.yaml:
+## Configuration of Home Assistant
+
+### Creating the Current Slider
+
+Add the following to your `configuration.yaml`:
+
 ```yaml
 input_number:
   itbat_charge_current:
@@ -81,8 +106,10 @@ input_number:
     mode: slider
 ```
 
-#### MQTT Publish Automation
-Add to your automations.yaml:
+### MQTT Publish Automation
+
+Add the following to your `automations.yaml`:
+
 ```yaml
 - alias: itbat_publish_mqtt_charge_current
   description: "Publishes the charge current limit to MQTT on change"
@@ -100,34 +127,36 @@ Add to your automations.yaml:
         retain: true
 ```
 
+---
 
 ## Interfacing the Charger
-### How to open the Charger
-    
-First remove the 4 marked screws on the bottom side of the charger.    
-![Bottom](/Images/charger_bottom.png)   
-   
-Now you can slide the top cover 1 centimeter down and remove it.    
-![Front](/Images/charger_front.png)   
-   
-You can see on the bottom right side the 6pin connector we need to connect.   
-     
-You can use a short (about 10cm) 6pin to 6pin flat ribbon cable with the 6pin sockets to connect the charger to the adapter.   
-The cable can be routed outside at the right side of the battery terminals (marked with red line).   
-![Cable](/Images/charger_bottom_cable.png)    
-    
-    
+
+### How to Open the Charger
+
+1. Remove the 4 marked screws on the bottom side of the charger.  
+   ![Bottom](/Images/charger_bottom.png)  
+
+2. Slide the top cover down about 1 cm and remove it.  
+   ![Front](/Images/charger_front.png)  
+
+3. On the bottom-right side, you’ll see the 6-pin connector we need to access.  
+
+Use a short (about 10 cm) 6-pin to 6-pin flat ribbon cable with sockets to connect the charger to the adapter.  
+You can route the cable out to the right side of the battery terminals (marked in red).  
+![Cable](/Images/charger_bottom_cable.png)
+
+---
+
 ### Connect USB to TTL Converter
-     
+
 ![Victron FTDI Schematic](/Images/Victron_BlueSmart_ftdi.jpg)
-      
-On the picture the jumper for the TTL level is wrong. 
-IMPORTANT: change the jumper to 3.3V    
 
-You have to use TTL to USB adapter for 3.3V TTL level.   
-If you use an isolated adapter you have to connect the 3.3V pin to the adapter.
-If you do not have an isolated Adapter DONT CONNECT to the 3.3V Pin! 
+> ⚠️ **Important:** The jumper for the TTL level in the picture is wrong.  
+> **Set the jumper to 3.3 V!**
 
+Use a TTL-to-USB adapter that supports **3.3 V TTL level**.
 
+- If you use an **isolated adapter**, connect the 3.3 V pin to the adapter.
+- If your adapter is **not isolated**, **do not connect** the 3.3 V pin!
 
-
+---
