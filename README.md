@@ -2,6 +2,21 @@
 
 A Python program to read voltage and current from a Victron Blue Smart Charger via VE.Direct, publish to Home Assistant via MQTT (with discovery & availability), and accept charge current limit updates via MQTT to send back to the charger.
 
+
+---
+
+## ⚠️ Disclaimer of Doom ⚠️
+
+This project is **completely unofficial**, has **zero affiliation** with Victron Energy, and was lovingly duct-taped together by enthusiastic nerds for nerds.
+
+By using this, you acknowledge that:
+
+- You are **fully responsible** for what happens to your charger, your MQTT server, your Home Assistant, your eyebrows, and possibly the space-time continuum.
+- No warranties, no guarantees, no tech support from Victron, Elon Musk, or your neighbor Klaus.
+- If your charger explodes, becomes self-aware, or insists on being called "Blinky the Battery Overlord" — that’s on you.
+
+**Use at your own risk. Hack responsibly. Stay safe.**
+
 ---
 
 ## Table of Contents
