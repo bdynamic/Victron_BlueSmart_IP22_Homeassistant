@@ -120,14 +120,14 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reexec
-sudo systemctl enable liontron-mqtt.service
-sudo systemctl start liontron-mqtt.service
+sudo systemctl enable itbat-charger.service
+sudo systemctl start itbat-charger.service
 ```
 
 #### Check logs
 
 ```bash
-journalctl -u liontron-mqtt.service -f
+journalctl -u itbat-charger.service -f
 ```
 
 
