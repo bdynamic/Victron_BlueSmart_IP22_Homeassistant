@@ -16,7 +16,21 @@ By using this, you acknowledge that:
 - If your charger explodes, becomes self-aware, or insists on being called "Blinky the Battery Overlord" — that’s on you.
 
 **Use at your own risk. Hack responsibly. Stay safe.**
+---
 
+## 🧙Many Thanks to the Original Wizards
+
+This project stands on the shoulders of giants — or at least one very talented dev:  
+👉 [@wasn-eu](https://github.com/wasn-eu) and their glorious repo  
+🔗 [github.com/wasn-eu/Victron_BlueSmart_IP22](https://github.com/wasn-eu/Victron_BlueSmart_IP22)
+
+Their code was the Gandalf to our Frodo, the kernel to our driver, the `__init__()` to our `main()`.
+
+We’ve shamelessly borrowed, refactored, extended, and generally tinkered with their original magic to make it play nice with Home Assistant, MQTT, and your inner need for glorious nerd control.
+
+Without their work, this project would still be stuck trying to `import serial` and wondering why `readline()` returns nothing.
+
+**May your baudrates be steady and your chargers forever smart.**
 ---
 
 ## Table of Contents
