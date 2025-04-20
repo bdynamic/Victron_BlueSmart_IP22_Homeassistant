@@ -116,6 +116,21 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
+#### Enable + start the service
+
+```bash
+sudo systemctl daemon-reexec
+sudo systemctl enable liontron-mqtt.service
+sudo systemctl start liontron-mqtt.service
+```
+
+#### Check logs
+
+```bash
+journalctl -u liontron-mqtt.service -f
+```
+
+
 ---
 
 ## Configuration of Home Assistant
